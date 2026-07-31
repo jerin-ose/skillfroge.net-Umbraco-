@@ -1,0 +1,44 @@
+name: .NET CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    name: Build, test and publish
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Restore packages
+        run: dotnet restore Skillfrog.Umbraco.sln
+
+      - name: Build application
+        run: dotnet build Skillfrog.Umbraco.sln --configuration Release --no-restore
+
+      - name: Run tests
+        run: dotnet test Skillfrog.Umbraco.sln --configuration Release --no-build --verbosity normal
+
+      - name: Publish application
+        run: >
+          dotnet publish src/Skillfrog.Web/Skillfrog.Web.csproj
+          --configuration Release
+          --no-build
+          --output ./publish
+
+      - name: Upload deployment artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: skillfrog-web
+          path: ./publish
+          if-no-files-found: error

@@ -1,0 +1,89 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@{
+    Layout = null;
+    var productName = Model.Name;
+    // Demo step: after adding the "shortDescription" property on the Product Document Type,
+    // this value will render on the page.
+    var shortDescription = Model.Value<string>("shortDescription");
+    var formattedDescription = Skillfrog.Web.Demo.ProductDescriptionFormatter.Format(shortDescription);
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@productName | Skillfrog Demo</title>
+    <style>
+        :root {
+            --ink: #14213d;
+            --accent: #fca311;
+            --paper: #f8f5f0;
+            --muted: #5c6578;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Georgia, serif;
+            background:
+                radial-gradient(circle at top left, rgba(252, 163, 17, 0.18), transparent 40%),
+                linear-gradient(160deg, #f8f5f0 0%, #ebe6dc 100%);
+            color: var(--ink);
+            min-height: 100vh;
+        }
+
+        main {
+            max-width: 42rem;
+            margin: 0 auto;
+            padding: 4rem 1.5rem;
+        }
+
+        .eyebrow {
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            font-size: 0.75rem;
+            color: var(--muted);
+            margin-bottom: 0.75rem;
+        }
+
+        h1 {
+            margin: 0 0 1rem;
+            font-size: clamp(2rem, 5vw, 3rem);
+            line-height: 1.1;
+        }
+
+        .short-description {
+            font-size: 1.15rem;
+            line-height: 1.6;
+            color: var(--muted);
+            border-left: 4px solid var(--accent);
+            padding-left: 1rem;
+            margin: 0;
+        }
+
+        .empty-hint {
+            color: var(--muted);
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <p class="eyebrow">Skillfrog product page</p>
+        <h1>@productName</h1>
+
+        @if (Skillfrog.Web.Demo.ProductDescriptionFormatter.HasValue(formattedDescription))
+        {
+            <p class="short-description">@formattedDescription</p>
+        }
+        else
+        {
+            <p class="empty-hint">
+                Short Description is not set yet. Add the <code>shortDescription</code> property
+                on the Product Document Type, then fill it on this page.
+            </p>
+        }
+    </main>
+</body>
+</html>
